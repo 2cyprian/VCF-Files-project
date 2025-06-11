@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}VCF Generated Successfully{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div style="text-align: center;">
+        <div style="font-size: 4rem; margin-bottom: 20px;">✅</div>
+        <h2 style="color: var(--reseda-green); margin-bottom: 20px;">
+            {% if is_zip %}
+                VCF Files Generated Successfully!
+            {% else %}
+                VCF File Generated Successfully!
+            {% endif %}
+        </h2>
+        
+        {% if group_name %}
+        <div style="background: var(--champagne); padding: 10px 20px; border-radius: 25px; display: inline-block; margin-bottom: 20px;">
+            <strong>📝 Group:</strong> {{ group_name }}
+        </div>
+        {% endif %}
+        
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-number">{{ phone_count }}</div>
+                <div class="stat-label">Total Contacts</div>
+            </div>
+            {% if is_zip %}
+            <div class="stat">
+                <div class="stat-number">{{ file_count }}</div>
+                <div class="stat-label">VCF Files</div>
+            </div>
+            {% endif %}
+            <div class="stat">
+                <div class="stat-number">#{{ record_id }}</div>
+                <div class="stat-label">Record ID</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <h3 style="color: var(--reseda-green); margin-bottom: 20px; text-align: center;">
+        📥 Download & Share
+    </h3>
+    
+    <div style="text-align: center;">
+        {% if is_zip %}
+        <a href="{{ url_for('download_file', filename=temp_file) }}" class="btn" style="font-size: 1.2rem; padding: 20px 40px;">
+            📦 Download ZIP File ({{ file_count }} VCF files)
+        </a>
+        
+        <div style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+            <h4 style="color: var(--reseda-green); margin-bottom: 10px;">📊 File Breakdown:</h4>
+            {% for vcf_file in vcf_files %}
+            <div style="margin: 5px 0; padding: 8px; background: white; border-radius: 5px; display: flex; justify-content: space-between; align-items: center;">
+                <span><strong>{{ vcf_file.filename }}</strong></span>
+                <span style="background: var(--reseda-green); color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.8rem;">
+                    {{ vcf_file.contact_count }} contacts
+                </span>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <a href="{{ url_for('download_file', filename=temp_file) }}" class="btn" style="font-size: 1.2rem; padding: 20px 40px;">
+            📁 Download VCF File
+        </a>
+        {% endif %}
+        
+        {% if whatsapp_link %}
+        <br><br>
+        <p style="margin-bottom: 15px; color: #666;">
+            📱 Share via WhatsApp:
+        </p>
+        <a href="{{ whatsapp_link }}" target="_blank" class="whatsapp-link" style="font-size: 1.1rem;">
+            💬 Open WhatsApp Chat
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="card">
+    <h3 style="color: var(--reseda-green); margin-bottom: 15px;">📋 What's Next?</h3>
+    <div style="line-height: 1.8;">
+        <p><strong>1. Download the VCF file</strong> by clicking the download button above</p>
+        <p><strong>2. Import to your phone:</strong> Open the VCF file on your phone to add all contacts</p>
+        <p><strong>3. WhatsApp Marketing:</strong> Use the contacts for your WhatsApp marketing campaigns</p>
+        {% if whatsapp_link %}
+        <p><strong>4. Share easily:</strong> Use the WhatsApp link to forward the VCF file to others</p>
+        {% endif %}
+    </div>
+</div>
+
+<div style="text-align: center; margin-top: 30px;">
+    <a href="{{ url_for('index') }}" class="btn btn-secondary">
+        🔄 Generate Another VCF
+    </a>
+    <a href="{{ url_for('history') }}" class="btn btn-secondary">
+        📊 View History
+    </a>
+</div>
+{% endblock %}

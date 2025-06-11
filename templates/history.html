@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+{% block title %}VCF Generation History{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2 style="color: var(--reseda-green); margin-bottom: 20px; text-align: center;">
+        📊 VCF Generation History
+    </h2>
+    
+    {% if records %}
+    <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">            <thead>
+                <tr style="background: var(--champagne);">
+                    <th style="padding: 15px; text-align: left; border: 1px solid #ddd; color: var(--reseda-green); font-weight: 600;">ID</th>
+                    <th style="padding: 15px; text-align: left; border: 1px solid #ddd; color: var(--reseda-green); font-weight: 600;">Generated</th>
+                    <th style="padding: 15px; text-align: left; border: 1px solid #ddd; color: var(--reseda-green); font-weight: 600;">Group</th>
+                    <th style="padding: 15px; text-align: left; border: 1px solid #ddd; color: var(--reseda-green); font-weight: 600;">Contacts</th>
+                    <th style="padding: 15px; text-align: left; border: 1px solid #ddd; color: var(--reseda-green); font-weight: 600;">Method</th>
+                    <th style="padding: 15px; text-align: left; border: 1px solid #ddd; color: var(--reseda-green); font-weight: 600;">WhatsApp</th>
+                    <th style="padding: 15px; text-align: center; border: 1px solid #ddd; color: var(--reseda-green); font-weight: 600;">Action</th>
+                </tr>
+            </thead>            <tbody>
+                {% for record in records %}
+                <tr{% if loop.index % 2 == 0 %} style="background: #f9f9f9;"{% endif %}>
+                    <td style="padding: 12px; border: 1px solid #ddd; font-weight: 600;">#{{ record.id }}</td>
+                    <td style="padding: 12px; border: 1px solid #ddd;">
+                        {{ record.timestamp.strftime('%Y-%m-%d %H:%M') }}
+                    </td>
+                    <td style="padding: 12px; border: 1px solid #ddd;">
+                        {% if record.group_name %}
+                            <span style="background: var(--champagne); color: var(--reseda-green); padding: 4px 8px; border-radius: 15px; font-size: 0.9rem; font-weight: 600;">
+                                {{ record.group_name }}
+                            </span>
+                        {% else %}
+                            <span style="color: #999; font-style: italic;">No group</span>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 12px; border: 1px solid #ddd;">
+                        <span style="background: var(--reseda-green); color: white; padding: 4px 8px; border-radius: 15px; font-size: 0.9rem;">
+                            {{ record.phone_count }} contacts
+                        </span>
+                    </td>
+                    <td style="padding: 12px; border: 1px solid #ddd;">
+                        {% if record.upload_method == 'csv' %}
+                            <span style="background: #28a745; color: white; padding: 4px 8px; border-radius: 15px; font-size: 0.8rem;">📊 CSV</span>
+                        {% elif record.upload_method == 'pdf' %}
+                            <span style="background: #dc3545; color: white; padding: 4px 8px; border-radius: 15px; font-size: 0.8rem;">📄 PDF</span>
+                        {% else %}
+                            <span style="background: #6c757d; color: white; padding: 4px 8px; border-radius: 15px; font-size: 0.8rem;">✍️ Manual</span>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 12px; border: 1px solid #ddd;">
+                        {% if record.user_whatsapp %}
+                            {{ record.user_whatsapp }}
+                        {% else %}
+                            <span style="color: #999; font-style: italic;">Not provided</span>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 12px; border: 1px solid #ddd; text-align: center;">
+                        <a href="{{ url_for('download_record', record_id=record.id) }}" 
+                           class="btn" 
+                           style="padding: 8px 16px; font-size: 0.9rem; margin: 0;">
+                            📁 Download
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <div style="margin-top: 30px; text-align: center; color: #666;">
+        <p>Showing last {{ records|length }} records</p>
+    </div>
+    
+    {% else %}
+    <div style="text-align: center; padding: 40px;">
+        <div style="font-size: 4rem; margin-bottom: 20px; opacity: 0.5;">📂</div>
+        <h3 style="color: #999; margin-bottom: 15px;">No VCF files generated yet</h3>
+        <p style="color: #666; margin-bottom: 30px;">Generate your first VCF file to see it in the history</p>
+        <a href="{{ url_for('index') }}" class="btn">
+            🚀 Generate VCF File
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+{% if records %}
+<div class="card">
+    <h3 style="color: var(--reseda-green); margin-bottom: 15px;">📈 Statistics</h3>
+    <div class="stats">
+        <div class="stat">
+            <div class="stat-number">{{ records|length }}</div>
+            <div class="stat-label">Total Generations</div>
+        </div>        <div class="stat">
+            <div class="stat-number">
+                {% set total_contacts = 0 %}
+                {% for record in records %}
+                    {% set total_contacts = total_contacts + record.phone_count %}
+                {% endfor %}
+                {{ total_contacts }}
+            </div>
+            <div class="stat-label">Total Contacts</div>
+        </div>
+        <div class="stat">
+            <div class="stat-number">
+                {% set with_whatsapp = 0 %}
+                {% for record in records %}
+                    {% if record.user_whatsapp %}
+                        {% set with_whatsapp = with_whatsapp + 1 %}
+                    {% endif %}
+                {% endfor %}
+                {{ with_whatsapp }}
+            </div>
+            <div class="stat-label">With WhatsApp</div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<div style="text-align: center; margin-top: 30px;">
+    <a href="{{ url_for('index') }}" class="btn btn-secondary">
+        🏠 Back to Home
+    </a>
+</div>
+{% endblock %}

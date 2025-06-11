@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+
+{% block title %}VCF Generator - Home{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2 style="color: var(--reseda-green); margin-bottom: 20px; text-align: center;">
+        Generate VCF File from Tanzanian Phone Numbers
+    </h2>
+      <form action="{{ url_for('process_numbers') }}" method="post" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="group_name">📝 Group Name (Optional)</label>
+            <input type="text" 
+                   id="group_name" 
+                   name="group_name" 
+                   placeholder="e.g., Marketing Team, VIP Clients, etc."
+                   style="width: 100%; padding: 12px; border: 2px solid var(--champagne); border-radius: 8px; font-size: 1rem; margin-top: 5px;">
+            <small style="color: #666; font-size: 0.9rem;">This will be used as prefix for contact names</small>
+        </div>
+
+        <div class="form-group">
+            <label for="file_upload">📁 Upload File (CSV or PDF)</label>
+            <input type="file" 
+                   id="file_upload" 
+                   name="file" 
+                   accept=".csv,.pdf"
+                   style="width: 100%; padding: 12px; border: 2px solid var(--champagne); border-radius: 8px; font-size: 1rem; margin-top: 5px; background: white;">
+            <small style="color: #666; font-size: 0.9rem;">Upload a CSV or PDF file containing phone numbers</small>
+        </div>
+
+        <div style="text-align: center; margin: 20px 0; color: #999; font-weight: 600;">
+            OR
+        </div>
+
+        <div class="form-group">
+            <label for="phone_numbers">
+                📞 Phone Numbers (one per line)
+            </label>
+            <textarea 
+                id="phone_numbers" 
+                name="phone_numbers" 
+                placeholder="Enter Tanzanian phone numbers, one per line:&#10;0712345678&#10;255687654321&#10;754321098&#10;+255612345678"
+            ></textarea>
+            <small style="color: #666; font-style: italic;">
+                Supports formats: 0712345678, 255712345678, +255712345678, 712345678
+            </small>
+        </div>
+        
+        <div class="form-group">
+            <label for="user_whatsapp">
+                💬 Your WhatsApp Number (optional)
+            </label>
+            <input 
+                type="text" 
+                id="user_whatsapp" 
+                name="user_whatsapp" 
+                placeholder="0712345678 or +255712345678"
+            >
+            <small style="color: #666; font-style: italic;">
+                Enter your WhatsApp number to get a quick chat link for forwarding the VCF file
+            </small>
+        </div>
+
+        <div class="form-group">
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                <input type="checkbox" id="create_multiple" name="create_multiple" style="transform: scale(1.2);">
+                <label for="create_multiple" style="margin: 0; font-weight: 600;">🗂️ Create Multiple Files (for easy debugging)</label>
+            </div>
+            <small style="color: #666; font-size: 0.9rem;">Split contacts into multiple VCF files for easier management</small>
+        </div>
+
+        <div class="form-group" id="contacts_per_file_group" style="display: none;">
+            <label for="contacts_per_file">📊 Contacts per File</label>
+            <input type="number" 
+                   id="contacts_per_file" 
+                   name="contacts_per_file" 
+                   value="50" 
+                   min="10" 
+                   max="200"
+                   style="width: 100px; padding: 8px; border: 2px solid var(--champagne); border-radius: 8px; font-size: 1rem; margin-top: 5px;">
+            <small style="color: #666; font-size: 0.9rem;">Number of contacts per VCF file (10-200)</small>
+        </div>
+        
+        <div style="text-align: center;">
+            <button type="submit" class="btn">
+                🚀 Generate VCF File(s)
+            </button>
+        </div>
+    </form>
+</div>
+
+<div class="card">
+    <h3 style="color: var(--reseda-green); margin-bottom: 15px;">ℹ️ How it works:</h3>
+    <ol style="line-height: 1.8;">
+        <li><strong>Enter phone numbers:</strong> Paste Tanzanian phone numbers, one per line</li>
+        <li><strong>Add your WhatsApp:</strong> Optionally enter your WhatsApp number</li>
+        <li><strong>Generate:</strong> Click the button to create your VCF file</li>
+        <li><strong>Download:</strong> Get your VCF file to import contacts</li>
+        <li><strong>Forward:</strong> Use the WhatsApp link to easily share the file</li>
+    </ol>
+</div>
+
+<div class="card">
+    <h3 style="color: var(--reseda-green); margin-bottom: 15px;">✨ Features:</h3>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+        <div style="text-align: center; padding: 20px;">
+            <div style="font-size: 2rem; margin-bottom: 10px;">🔄</div>
+            <h4>Auto Formatting</h4>
+            <p>Automatically converts to international format (+255...)</p>
+        </div>
+        <div style="text-align: center; padding: 20px;">
+            <div style="font-size: 2rem; margin-bottom: 10px;">💾</div>
+            <h4>Database Storage</h4>
+            <p>All generated VCF files are saved for future reference</p>
+        </div>
+        <div style="text-align: center; padding: 20px;">
+            <div style="font-size: 2rem; margin-bottom: 10px;">📱</div>
+            <h4>WhatsApp Integration</h4>
+            <p>Quick links to share your VCF files via WhatsApp</p>
+        </div>    </div>
+</div>
+
+<script>
+    // Show/hide contacts per file input based on checkbox
+    document.getElementById('create_multiple').addEventListener('change', function() {
+        const contactsGroup = document.getElementById('contacts_per_file_group');
+        contactsGroup.style.display = this.checked ? 'block' : 'none';
+    });
+</script>
+{% endblock %}
