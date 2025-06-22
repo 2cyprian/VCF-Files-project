@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container" style="max-width: 900px; margin: 0 auto;">
+    <h2 style="color: var(--reseda-green); margin-bottom: 18px;">Universal Business Info Scraper</h2>
+    <form method="post" style="background: var(--champagne); padding: 18px 24px; border-radius: 10px; box-shadow: 0 2px 8px #0001; margin-bottom: 24px;">
+        <label style="font-weight: bold;">Business Page URL:</label>
+        <input type="url" name="url" required placeholder="https://example.com/business" style="width: 60%; padding: 7px; border-radius: 5px; border: 1px solid #ccc; margin: 0 10px 0 0;">
+        <button type="submit" class="btn" style="background: var(--reseda-green); color: white; border: none; padding: 8px 18px; border-radius: 5px;">Scrape</button>
+    </form>
+    {% if info %}
+    <div style="background: #fff; border-radius: 10px; box-shadow: 0 2px 8px #0001; padding: 18px 24px; margin-bottom: 24px;">
+        <h3 style="color: var(--reseda-green);">Extracted Info (Preview)</h3>
+        <ul style="list-style: none; padding: 0;">
+            {% for key, value in info.items() if key != 'source_url' and key != 'entries' %}
+                <li style="margin-bottom: 7px;"><b style="color: var(--reseda-green);">{{ key|capitalize }}:</b>
+                    {% if value is string %}{{ value }}
+                    {% elif value is mapping %}
+                        {% for k, v in value.items() %}{{ k }}: <a href="{{ v }}" target="_blank">{{ v }}</a> {% endfor %}
+                    {% elif value is sequence %}{{ value|join(', ') }}{% endif %}
+                </li>
+            {% endfor %}
+            <li style="margin-bottom: 7px;"><b style="color: var(--reseda-green);">Source URL:</b> <a href="{{ info.source_url }}" target="_blank">{{ info.source_url }}</a></li>
+        </ul>
+        {% if info.entries is defined %}
+        <h4 style="color: var(--reseda-green);">Entries Found:</h4>
+        <ul style="list-style: disc inside;">
+            {% for entry in info.entries %}
+                <li><a href="{{ entry.link }}" target="_blank">{{ entry.name }}</a></li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    </div>
+    {% endif %}
+    <form method="post" action="{{ url_for('bizscraper.clear_history') }}" style="display:inline;">
+        <button type="submit" onclick="return confirm('Are you sure you want to delete all history?');" class="btn" style="background:#c00;color:white; border-radius:5px;">🗑️ Clear All History</button>
+    </form>
+    <br><br>
+    <h3 style="color: var(--reseda-green);">History</h3>
+    <div style="margin-bottom: 12px;">
+        <a href="{{ url_for('bizscraper.export_csv') }}" class="btn" style="background: var(--reseda-green); color: white; border-radius:5px; margin-right: 8px;">Export as CSV</a>
+        <a href="{{ url_for('bizscraper.export_vcf') }}" class="btn" style="background: var(--reseda-green); color: white; border-radius:5px; margin-right: 8px;">Export as VCF</a>
+        <a href="{{ url_for('bizscraper.export_json') }}" class="btn" style="background: var(--reseda-green); color: white; border-radius:5px;">Export as JSON</a>
+    </div>
+    <div style="overflow-x:auto;">
+    <table style="width:100%; border-collapse:collapse; background: #fff; box-shadow: 0 2px 8px #0001; border-radius: 10px;">
+        <thead style="background: var(--champagne);">
+        <tr>
+            <th style="padding: 8px; color: var(--reseda-green);">Name</th>
+            <th style="padding: 8px; color: var(--reseda-green);">Phones</th>
+            <th style="padding: 8px; color: var(--reseda-green);">Emails</th>
+            <th style="padding: 8px; color: var(--reseda-green);">Address</th>
+            <th style="padding: 8px; color: var(--reseda-green);">Website</th>
+            <th style="padding: 8px; color: var(--reseda-green);">Socials</th>
+            <th style="padding: 8px; color: var(--reseda-green);">Description</th>
+            <th style="padding: 8px; color: var(--reseda-green);">Source URL</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for r in results %}
+        <tr>
+            <td style="padding: 7px;">{{ r.name if r.name is defined }}</td>
+            <td style="padding: 7px;">{{ r.phones|join(', ') if r.phones is defined }}</td>
+            <td style="padding: 7px;">{{ r.emails|join(', ') if r.emails is defined }}</td>
+            <td style="padding: 7px;">{{ r.address if r.address is defined }}</td>
+            <td style="padding: 7px;">{{ r.website if r.website is defined }}</td>
+            <td style="padding: 7px;">
+                {% if r.socials is defined %}
+                    {% for k,v in r.socials.items() %}{{ k }}: <a href="{{ v }}" target="_blank">{{ v }}</a> {% endfor %}
+                {% endif %}
+            </td>
+            <td style="padding: 7px;">{{ r.description if r.description is defined }}</td>
+            <td style="padding: 7px;"><a href="{{ r.source_url }}" target="_blank">Link</a></td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+</div>
+{% endblock %}

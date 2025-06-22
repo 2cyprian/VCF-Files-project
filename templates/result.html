@@ -46,7 +46,7 @@
     
     <div style="text-align: center;">
         {% if is_zip %}
-        <a href="{{ url_for('download_file', filename=temp_file) }}" class="btn" style="font-size: 1.2rem; padding: 20px 40px;">
+        <a href="{{ url_for('main.download_file', filename=temp_file) }}" class="btn" style="font-size: 1.2rem; padding: 20px 40px;">
             📦 Download ZIP File ({{ file_count }} VCF files)
         </a>
         
@@ -62,7 +62,7 @@
             {% endfor %}
         </div>
         {% else %}
-        <a href="{{ url_for('download_file', filename=temp_file) }}" class="btn" style="font-size: 1.2rem; padding: 20px 40px;">
+        <a href="{{ url_for('main.download_file', filename=temp_file) }}" class="btn" style="font-size: 1.2rem; padding: 20px 40px;">
             📁 Download VCF File
         </a>
         {% endif %}
@@ -92,10 +92,10 @@
 </div>
 
 <div style="text-align: center; margin-top: 30px;">
-    <a href="{{ url_for('index') }}" class="btn btn-secondary">
+    <a href="{{ url_for('main.index') }}" class="btn btn-secondary">
         🔄 Generate Another VCF
     </a>
-    <a href="{{ url_for('history') }}" class="btn btn-secondary">
+    <a href="{{ url_for('main.history') }}" class="btn btn-secondary">
         📊 View History
     </a>
 </div>

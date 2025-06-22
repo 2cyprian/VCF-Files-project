@@ -221,6 +221,22 @@
     </style>
 </head>
 <body>
+    <nav style="background: var(--reseda-green); padding: 12px 0; margin-bottom: 30px;">
+        <div class="container" style="display: flex; gap: 30px; align-items: center;">
+            <a href="{{ url_for('main.index') }}" style="color: var(--champagne); font-weight: bold; text-decoration: none; font-size: 1.1rem;">
+                📇 VCF Generator
+            </a>
+            <a href="{{ url_for('mapscraper.mapscraper') }}" style="color: var(--champagne); text-decoration: none;">
+                🗺️ Map Scraper
+            </a>
+            <a href="{{ url_for('bizscraper.bizscraper') }}" style="color: var(--champagne); text-decoration: none;">
+                🏢 Business Scraper
+            </a>
+            <a href="{{ url_for('main.history') }}" style="color: var(--champagne); text-decoration: none;">
+                📜 History
+            </a>
+        </div>
+    </nav>
     <div class="container">
         <div class="header">
             <h1>📱 VCF Generator</h1>
@@ -228,8 +244,9 @@
         </div>
         
         <div class="nav">
-            <a href="{{ url_for('index') }}">🏠 Home</a>
-            <a href="{{ url_for('history') }}">📊 History</a>
+            <a href="{{ url_for('main.index') }}">🏠 Home</a>
+            
+            <a href="{{ url_for('main.history') }}">📊 History</a>
         </div>
         
         {% with messages = get_flashed_messages(with_categories=true) %}

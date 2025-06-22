@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container" style="max-width: 900px; margin: 0 auto;">
+    <h2 style="color: var(--reseda-green); margin-bottom: 18px;">Map-Based Business Data Scraper</h2>
+    <form method="post" style="background: var(--champagne); padding: 18px 24px; border-radius: 10px; box-shadow: 0 2px 8px #0001; margin-bottom: 24px;">
+        <label style="font-weight: bold;">Source:</label>
+        <select name="source" id="source" required style="margin-right: 10px; padding: 6px; border-radius: 5px;">
+            <option value="google">Google Maps</option>
+            <option value="osm">OpenStreetMap</option>
+        </select>
+        <label style="font-weight: bold;">Location:</label>
+        <input type="text" name="location" required placeholder="e.g. Dodoma, Moshi, Nairobi" style="width: 180px; padding: 6px; border-radius: 5px; border: 1px solid #ccc; margin-right: 10px;">
+        <label style="font-weight: bold;">Category:</label>
+        <select name="category" id="category" required onchange="updateSubcategories()" style="margin-right: 10px; padding: 6px; border-radius: 5px;">
+            <option value="School">School</option>
+            <option value="Business">Business</option>
+            <option value="Health">Health</option>
+            <option value="Government">Government</option>
+            <option value="Other">Other</option>
+        </select>
+        <label style="font-weight: bold;">Subcategory:</label>
+        <select name="subcategory" id="subcategory" required style="margin-right: 10px; padding: 6px; border-radius: 5px;"></select>
+        <div id="serpapi_key_div" style="display:none; margin-top: 10px;">
+            <label style="font-weight: bold;">SerpAPI Key (for Google Maps):</label>
+            <input type="text" name="serpapi_key" placeholder="Enter your SerpAPI key" style="width: 220px; padding: 6px; border-radius: 5px; border: 1px solid #ccc;">
+        </div>
+        <button type="submit" class="btn" style="background: var(--reseda-green); color: white; border: none; padding: 8px 18px; border-radius: 5px; margin-left: 10px;">Start Scraping</button>
+    </form>
+    {% if results %}
+    <div style="margin-bottom: 12px;">
+        <a href="{{ url_for('mapscraper.export_csv') }}" class="btn" style="background: var(--reseda-green); color: white; border-radius:5px; margin-right: 8px;">Export as CSV</a>
+        <a href="{{ url_for('mapscraper.export_vcf') }}" class="btn" style="background: var(--reseda-green); color: white; border-radius:5px;">Export as VCF</a>
+    </div>
+    <div style="overflow-x:auto;">
+    <table style="width:100%; border-collapse:collapse; background: #fff; box-shadow: 0 2px 8px #0001; border-radius: 10px;">
+        <thead style="background: var(--champagne);">
+        <tr>
+            <th style="padding: 8px; color: var(--reseda-green);">Name</th>
+            <th style="padding: 8px; color: var(--reseda-green);">Phone</th>
+            <th style="padding: 8px; color: var(--reseda-green);">Address</th>
+            <th style="padding: 8px; color: var(--reseda-green);">Website</th>
+            <th style="padding: 8px; color: var(--reseda-green);">Latitude</th>
+            <th style="padding: 8px; color: var(--reseda-green);">Longitude</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for r in results %}
+        <tr>
+            <td style="padding: 7px;">{{ r.name }}</td>
+            <td style="padding: 7px;">{{ r.phone }}</td>
+            <td style="padding: 7px;">{{ r.address }}</td>
+            <td style="padding: 7px;">{{ r.website }}</td>
+            <td style="padding: 7px;">{{ r.lat }}</td>
+            <td style="padding: 7px;">{{ r.lon }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+    {% endif %}
+</div>
+<script>
+const subcategories = {
+    'School': ['University', 'Secondary', 'Primary'],
+    'Business': ['Logistics', 'Electronics', 'Retail'],
+    'Health': ['Clinic', 'Hospital', 'Pharmacy'],
+    'Government': ['Ministry', 'Agency', 'Office'],
+    'Other': ['Other']
+};
+function updateSubcategories() {
+    const cat = document.getElementById('category').value;
+    const subcat = document.getElementById('subcategory');
+    subcat.innerHTML = '';
+    subcategories[cat].forEach(function(sc) {
+        let opt = document.createElement('option');
+        opt.value = sc;
+        opt.innerHTML = sc;
+        subcat.appendChild(opt);
+    });
+}
+document.getElementById('category').addEventListener('change', updateSubcategories);
+window.onload = updateSubcategories;
+document.getElementById('source').addEventListener('change', function() {
+    document.getElementById('serpapi_key_div').style.display = this.value === 'google' ? '' : 'none';
+});
+</script>
+{% endblock %}

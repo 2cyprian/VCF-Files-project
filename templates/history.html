@@ -58,7 +58,7 @@
                         {% endif %}
                     </td>
                     <td style="padding: 12px; border: 1px solid #ddd; text-align: center;">
-                        <a href="{{ url_for('download_record', record_id=record.id) }}" 
+                        <a href="{{ url_for('main.download_record', record_id=record.id) }}" 
                            class="btn" 
                            style="padding: 8px 16px; font-size: 0.9rem; margin: 0;">
                             📁 Download
@@ -79,7 +79,7 @@
         <div style="font-size: 4rem; margin-bottom: 20px; opacity: 0.5;">📂</div>
         <h3 style="color: #999; margin-bottom: 15px;">No VCF files generated yet</h3>
         <p style="color: #666; margin-bottom: 30px;">Generate your first VCF file to see it in the history</p>
-        <a href="{{ url_for('index') }}" class="btn">
+        <a href="{{ url_for('main.index') }}" class="btn">
             🚀 Generate VCF File
         </a>
     </div>
@@ -120,7 +120,7 @@
 {% endif %}
 
 <div style="text-align: center; margin-top: 30px;">
-    <a href="{{ url_for('index') }}" class="btn btn-secondary">
+    <a href="{{ url_for('main.index') }}" class="btn btn-secondary">
         🏠 Back to Home
     </a>
 </div>
